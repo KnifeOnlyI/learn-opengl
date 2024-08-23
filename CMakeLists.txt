@@ -40,7 +40,19 @@ include_directories(${CMAKE_CURRENT_LIST_DIR}/third/glad/include)
 
 find_package(SDL2 REQUIRED)
 
-add_executable(${PROJECT_NAME} ${SOURCES} ${THIRD_SOURCES} ${HEADERS} ${THIRD_HEADERS})
+add_executable(${PROJECT_NAME} ${SOURCES} ${THIRD_SOURCES} ${HEADERS} ${THIRD_HEADERS}
+    core/header/opengl/ShaderProgram.hpp
+    core/header/opengl/Shader.hpp
+    core/header/opengl/OpenGLResource.hpp
+    core/src/opengl/Shader.cpp
+    core/src/opengl/ShaderProgram.cpp
+    core/header/io/File.hpp
+    core/src/io/File.cpp
+    core/header/opengl/VAO.hpp
+    core/src/opengl/VAO.cpp
+    core/header/opengl/VBO.hpp
+    core/src/opengl/VBO.cpp
+)
 target_link_libraries(learnopengl SDL2::SDL2)
 # If problems happens...
 # target_link_libraries(learnopengl SDL2::SDL2 GL X11 pthread Xrandr Xi dl)
