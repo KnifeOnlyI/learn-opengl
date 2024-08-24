@@ -155,7 +155,7 @@ int main() {
         opengl::VAO::bind(*vao);
         opengl::ShaderProgram::use(*solidColorShaderProgram);
 
-        glDrawElements(GL_TRIANGLES, verticesIndex.size(), GL_UNSIGNED_INT, nullptr);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
 
         SDL_GL_SwapWindow(window);
     }
