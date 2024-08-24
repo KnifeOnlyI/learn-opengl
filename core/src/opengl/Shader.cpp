@@ -15,14 +15,13 @@ Shader::Shader(const GLuint shaderProgram, const GLenum type, const std::string 
     glGetShaderiv(_handle, GL_COMPILE_STATUS, &shaderCompiled);
 
     if (!shaderCompiled) {
-        glDeleteShader(_handle);
-
         std::string info(512, '\0');
 
         glGetShaderInfoLog(_handle, 512, nullptr, info.data());
 
         std::cerr << "ERROR::SHADER::" << type << "::COMPILATION_FAILED\n" << info << std::endl;
 
+        glDeleteShader(_handle);
         throw std::runtime_error("Shader compilation failed");
     }
 
@@ -32,14 +31,13 @@ Shader::Shader(const GLuint shaderProgram, const GLenum type, const std::string 
     glGetProgramiv(shaderProgram, GL_ATTACHED_SHADERS, &shaderAttached);
 
     if (!shaderAttached) {
-        glDeleteShader(_handle);
-
         std::string info(512, '\0');
 
         glGetShaderInfoLog(_handle, 512, nullptr, info.data());
 
         std::cerr << "ERROR::SHADER::VERTEX::ATTACH_TO_PROGRAM_FAILED: " << info << std::endl;
 
+        glDeleteShader(_handle);
         throw std::runtime_error("Shader attach failed");
     }
 }

@@ -23,6 +23,7 @@ ShaderProgram::ShaderProgram(const std::string &vertexShaderSource, const std::s
 
         std::cerr << "ERROR::SHADER::PROGRAM::LINKING_FAILED: " << info << std::endl;
 
+        glDeleteProgram(_handle);
         throw std::runtime_error("Shader program linking failed");
     }
 }
