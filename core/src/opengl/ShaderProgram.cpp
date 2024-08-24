@@ -46,6 +46,10 @@ unsigned ShaderProgram::getHandle() const {
     return _handle;
 }
 
+GLint ShaderProgram::getAttributeLocation(const std::string &name) const {
+    return glGetAttribLocation(_handle, name.c_str());
+}
+
 void ShaderProgram::use(const ShaderProgram &shaderProgram) {
     glUseProgram(shaderProgram.getHandle());
 }

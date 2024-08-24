@@ -8,13 +8,16 @@
 namespace opengl {
 class ShaderProgram final : public OpenGLResource {
 public:
+
+    static void use(const ShaderProgram &shaderProgram);
+
     explicit ShaderProgram(const std::vector<Shader *> &shaders);
 
     ~ShaderProgram() override;
 
     [[nodiscard]] unsigned getHandle() const override;
 
-    static void use(const ShaderProgram &shaderProgram);
+    GLint getAttributeLocation(const std::string &name) const;
 
 private:
     unsigned int _handle;

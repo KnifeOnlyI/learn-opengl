@@ -120,6 +120,9 @@ int main() {
     bool quit = false;
     SDL_Event event;
 
+    const auto solidColorShaderProgram = getSolidColorShaderProgram();
+    const auto solidColorOtherShaderProgram = getSolidColorOtherShaderProgram();
+
     constexpr std::array leftTriangleVertices = {
         -0.5f, 0.25f, 0.0f, // top
         -0.75f, -0.25f, 0.0f, // bottom left
@@ -142,18 +145,35 @@ int main() {
 
     leftTriangleVBO->use();
     leftTriangleVBO->sendData(leftTriangleVertices.data(), leftTriangleVertices.size() * sizeof(float), GL_STATIC_DRAW);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
-    glEnableVertexAttribArray(0);
+
+    const GLint solidColorShaderPositionAttribLocation = solidColorShaderProgram->getAttributeLocation("position");
+
+    glVertexAttribPointer(
+        solidColorShaderPositionAttribLocation,
+        3,
+        GL_FLOAT,
+        GL_FALSE,
+        0,
+        nullptr
+    );
+    glEnableVertexAttribArray(solidColorShaderPositionAttribLocation);
 
     opengl::VAO::bind(*rightTriangleVAO);
 
     rightTriangleVBO->use();
     rightTriangleVBO->sendData(rightTriangleVertices.data(), rightTriangleVertices.size() * sizeof(float), GL_STATIC_DRAW);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
-    glEnableVertexAttribArray(0);
 
-    const auto solidColorShaderProgram = getSolidColorShaderProgram();
-    const auto solidColorOtherShaderProgram = getSolidColorOtherShaderProgram();
+    const GLint solidColorOtherShaderPositionAttribLocation = solidColorShaderProgram->getAttributeLocation("position");
+
+    glVertexAttribPointer(
+        solidColorOtherShaderPositionAttribLocation,
+        3,
+        GL_FLOAT,
+        GL_FALSE,
+        0,
+        nullptr
+    );
+    glEnableVertexAttribArray(solidColorOtherShaderPositionAttribLocation);
 
     while (!quit) {
         while (SDL_PollEvent(&event)) {
