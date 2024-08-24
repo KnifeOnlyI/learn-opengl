@@ -64,6 +64,22 @@ std::unique_ptr<opengl::ShaderProgram> getSolidColorShaderProgram() {
     return std::make_unique<opengl::ShaderProgram>(shaders);
 }
 
+std::unique_ptr<opengl::ShaderProgram> getSolidColorOtherShaderProgram() {
+    const auto vertexShader = std::make_unique<opengl::Shader>(
+        std::make_unique<io::File>("resources/shaders/solid-color/solid-color.vert")->getContent(),
+        GL_VERTEX_SHADER
+    );
+
+    const auto fragmentShader = std::make_unique<opengl::Shader>(
+        std::make_unique<io::File>("resources/shaders/solid-color/solid-color-other.frag")->getContent(),
+        GL_FRAGMENT_SHADER
+    );
+
+    std::vector shaders {vertexShader.get(), fragmentShader.get()};
+
+    return std::make_unique<opengl::ShaderProgram>(shaders);
+}
+
 int main() {
     SDL_Init(SDL_INIT_VIDEO);
 
@@ -137,6 +153,7 @@ int main() {
     glEnableVertexAttribArray(0);
 
     const auto solidColorShaderProgram = getSolidColorShaderProgram();
+    const auto solidColorOtherShaderProgram = getSolidColorOtherShaderProgram();
 
     while (!quit) {
         while (SDL_PollEvent(&event)) {
@@ -158,10 +175,10 @@ int main() {
         glClear(GL_COLOR_BUFFER_BIT);
 
         opengl::ShaderProgram::use(*solidColorShaderProgram);
-
         opengl::VAO::bind(*leftTriangleVAO);
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
+        opengl::ShaderProgram::use(*solidColorOtherShaderProgram);
         opengl::VAO::bind(*rightTriangleVAO);
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
