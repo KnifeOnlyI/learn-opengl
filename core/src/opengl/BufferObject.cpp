@@ -15,11 +15,12 @@ unsigned BufferObject::getHandle() const {
     return _handle;
 }
 
-void BufferObject::use() const {
-    glBindBuffer(_target, _handle);
+void BufferObject::sendData(const void *data, const GLsizeiptr size, const GLenum usage) const {
+    bind();
+    glBufferData(_target, size, data, usage);
 }
 
-void BufferObject::sendData(const void *data, const GLsizeiptr size, const GLenum usage) const {
-    glBufferData(_target, size, data, usage);
+void BufferObject::bind() const {
+    glBindBuffer(_target, _handle);
 }
 }

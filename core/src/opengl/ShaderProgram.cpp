@@ -5,6 +5,10 @@
 #include "glad/glad.h"
 
 namespace opengl {
+void ShaderProgram::use(const ShaderProgram &shaderProgram) {
+    glUseProgram(shaderProgram.getHandle());
+}
+
 ShaderProgram::ShaderProgram(const std::vector<Shader *> &shaders): _handle {glCreateProgram()} {
     int success;
 
@@ -50,7 +54,7 @@ GLint ShaderProgram::getAttributeLocation(const std::string &name) const {
     return glGetAttribLocation(_handle, name.c_str());
 }
 
-void ShaderProgram::use(const ShaderProgram &shaderProgram) {
-    glUseProgram(shaderProgram.getHandle());
+GLint ShaderProgram::getUniformLocation(const std::string &name) const {
+    return glGetUniformLocation(_handle, name.c_str());
 }
 }

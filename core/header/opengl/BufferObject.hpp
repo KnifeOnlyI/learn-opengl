@@ -12,11 +12,11 @@ public:
 
     [[nodiscard]] unsigned getHandle() const override;
 
-    void use() const;
-
     void sendData(const void *data, GLsizeiptr size, GLenum usage) const;
 
 private:
+    void bind() const;
+
     GLuint _target;
     unsigned int _handle {};
 };

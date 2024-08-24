@@ -5,13 +5,14 @@
 namespace opengl {
 class VAO final : public OpenGLResource {
 public:
+
+    static void bind(const VAO &vao);
+
     VAO();
 
     ~VAO() override;
 
     [[nodiscard]] unsigned getHandle() const override;
-
-    static void bind(const VAO &vao);
 
 private:
     unsigned int _handle {};

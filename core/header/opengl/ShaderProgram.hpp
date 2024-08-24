@@ -19,6 +19,8 @@ public:
 
     GLint getAttributeLocation(const std::string &name) const;
 
+    GLint getUniformLocation(const std::string &name) const;
+
 private:
     unsigned int _handle;
 };
