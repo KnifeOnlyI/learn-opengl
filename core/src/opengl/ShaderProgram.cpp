@@ -49,6 +49,12 @@ GLint ShaderProgram::getUniformLocation(const std::string &name) const {
     return glGetUniformLocation(_handle, name.c_str());
 }
 
+ShaderProgram &ShaderProgram::setUniform3f(const std::string &name, const float v0, const float v1, const float v2) {
+    glUniform3f(getUniformLocation(name), v0, v1, v2);
+
+    return *this;
+}
+
 ShaderProgram &ShaderProgram::setUniform4f(const std::string &name, const float v0, const float v1, const float v2, const float v3) {
     glUniform4f(getUniformLocation(name), v0, v1, v2, v3);
 

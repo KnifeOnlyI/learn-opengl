@@ -97,7 +97,6 @@ int main() {
     );
 
     const GLint solidColorShaderPositionAttribLocation = solidColorShaderProgram->getAttributeLocation("position");
-    const GLint solidColorShaderColorUniformLocation = solidColorShaderProgram->getUniformLocation("color");
 
     const GLint vertexColorShaderPositionAttribLocation = vertexColorShaderProgram->getAttributeLocation("position");
     const GLint vertexColorShaderColorAttribLocation = vertexColorShaderProgram->getAttributeLocation("color");
@@ -178,12 +177,13 @@ int main() {
         glClear(GL_COLOR_BUFFER_BIT);
 
         solidColorShaderProgram->use();
-        glUniform4f(solidColorShaderColorUniformLocation, color, 1.0f, 1.0f - color, 1.0f);
+        solidColorShaderProgram->setUniform4f("color", color, 1.0f, 1.0f - color, 1.0f);
 
         leftTriangleVAO->use();
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
         vertexColorShaderProgram->use();
+        vertexColorShaderProgram->setUniform3f("offset", 0.25f, 0.25f, 0.25f);
 
         rightTriangleVAO->use();
         glDrawArrays(GL_TRIANGLES, 0, 3);
