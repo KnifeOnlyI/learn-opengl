@@ -104,15 +104,17 @@ int main() {
     bool quit = false;
     SDL_Event event;
 
-    constexpr std::array rectangleVertices = {
-        0.5f, 0.5f, 0.0f, // top right
-        0.5f, -0.5f, 0.0f, // bottom right
-        -0.5f, -0.5f, 0.0f, // bottom left
-        -0.5f, 0.5f, 0.0f // top left
+    constexpr std::array vertices = {
+        -0.5f, 0.25f, 0.0f, // triangle left : top
+        -0.75f, -0.25f, 0.0f, // triangle left : bottom left
+        -0.25f, -0.25f, 0.0f, // triangle left : bottom right
+        0.25f, 0.25f, 0.0f, // triangle right : top left
+        0.75f, 0.25f, 0.0f, // triangle right : top right
+        0.5f, -0.25f, 0.0f // triangle right : bottom
     };
-    constexpr std::array<unsigned int, 6> rectangleVerticesIndex = {
-        0, 1, 3, // first triangle vertices index (top right, bottom right, top left)
-        1, 2, 3 // second triangle vertices index (bottom right, bottom left, top left)
+    constexpr std::array<unsigned int, 6> verticesIndex = {
+        0, 1, 2, // first triangle vertices index (top right, bottom right, top left)
+        3, 4, 5 // second triangle vertices index (bottom right, bottom left, top left)
     };
 
     const auto vao = std::make_unique<opengl::VAO>();
@@ -122,12 +124,12 @@ int main() {
     opengl::VAO::bind(*vao);
 
     vbo->use();
-    vbo->sendData(rectangleVertices.data(), rectangleVertices.size() * sizeof(float), GL_STATIC_DRAW);
+    vbo->sendData(vertices.data(), vertices.size() * sizeof(float), GL_STATIC_DRAW);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
     glEnableVertexAttribArray(0);
 
     ebo->use();
-    ebo->sendData(rectangleVerticesIndex.data(), rectangleVerticesIndex.size() * sizeof(int), GL_STATIC_DRAW);
+    ebo->sendData(verticesIndex.data(), verticesIndex.size() * sizeof(int), GL_STATIC_DRAW);
 
     const auto solidColorShaderProgram = getSolidColorShaderProgram();
 
@@ -153,7 +155,7 @@ int main() {
         opengl::VAO::bind(*vao);
         opengl::ShaderProgram::use(*solidColorShaderProgram);
 
-        glDrawElements(GL_TRIANGLES, rectangleVerticesIndex.size(), GL_UNSIGNED_INT, nullptr);
+        glDrawElements(GL_TRIANGLES, verticesIndex.size(), GL_UNSIGNED_INT, nullptr);
 
         SDL_GL_SwapWindow(window);
     }
