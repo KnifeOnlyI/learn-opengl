@@ -64,6 +64,22 @@ std::unique_ptr<opengl::ShaderProgram> getSolidColorShaderProgram() {
     return std::make_unique<opengl::ShaderProgram>(shaders);
 }
 
+std::unique_ptr<opengl::ShaderProgram> getVertexColorShaderProgram() {
+    const auto vertexShader = std::make_unique<opengl::Shader>(
+        std::make_unique<io::File>("resources/shaders/vertex-color/vertex-color.vert")->getContent(),
+        GL_VERTEX_SHADER
+    );
+
+    const auto fragmentShader = std::make_unique<opengl::Shader>(
+        std::make_unique<io::File>("resources/shaders/vertex-color/vertex-color.frag")->getContent(),
+        GL_FRAGMENT_SHADER
+    );
+
+    std::vector shaders {vertexShader.get(), fragmentShader.get()};
+
+    return std::make_unique<opengl::ShaderProgram>(shaders);
+}
+
 int main() {
     SDL_Init(SDL_INIT_VIDEO);
 
@@ -105,9 +121,13 @@ int main() {
     SDL_Event event;
 
     const auto solidColorShaderProgram = getSolidColorShaderProgram();
+    const auto vertexColorShaderProgram = getVertexColorShaderProgram();
 
     const GLint solidColorShaderPositionAttribLocation = solidColorShaderProgram->getAttributeLocation("position");
     const GLint solidColorShaderColorUniformLocation = solidColorShaderProgram->getUniformLocation("color");
+
+    const GLint vertexColorShaderPositionAttribLocation = vertexColorShaderProgram->getAttributeLocation("position");
+    const GLint vertexColorShaderColorAttribLocation = vertexColorShaderProgram->getAttributeLocation("color");
 
     constexpr std::array leftTriangleVertices = {
         -0.5f, 0.25f, 0.0f, // top
@@ -116,9 +136,9 @@ int main() {
     };
 
     constexpr std::array rightTriangleVertices = {
-        0.25f, 0.25f, 0.0f, // top left
-        0.75f, 0.25f, 0.0f, // top right
-        0.5f, -0.25f, 0.0f // bottom
+        0.25f, 0.25f, 0.0f, 1.0f, 0.0f, 0.0f, // top left (red)
+        0.75f, 0.25f, 0.0f, 0.0f, 1.0f, 0.0f, // top right (green)
+        0.5f, -0.25f, 0.0f, 0.0f, 0.0f, 1.0f, // bottom (blue)
     };
 
     const auto leftTriangleVAO = std::make_unique<opengl::VAO>();
@@ -146,14 +166,27 @@ int main() {
     rightTriangleVBO->sendData(rightTriangleVertices.data(), rightTriangleVertices.size() * sizeof(float), GL_STATIC_DRAW);
 
     glVertexAttribPointer(
-        solidColorShaderPositionAttribLocation,
+        vertexColorShaderPositionAttribLocation,
         3,
         GL_FLOAT,
         GL_FALSE,
-        0,
+        sizeof(float) * 6,
         nullptr
     );
-    glEnableVertexAttribArray(solidColorShaderPositionAttribLocation);
+    glEnableVertexAttribArray(vertexColorShaderPositionAttribLocation);
+
+    glVertexAttribPointer(
+        vertexColorShaderColorAttribLocation,
+        3,
+        GL_FLOAT,
+        GL_FALSE,
+        sizeof(float) * 6,
+        reinterpret_cast<void *>(3 * sizeof(float))
+    );
+    glEnableVertexAttribArray(vertexColorShaderColorAttribLocation);
+
+    std::cout << "vertexColorShaderPositionAttribLocation: " << vertexColorShaderPositionAttribLocation << std::endl;
+    std::cout << "vertexColorShaderColorAttribLocation: " << vertexColorShaderColorAttribLocation << std::endl;
 
     float color = 1.0f;
 
@@ -182,7 +215,8 @@ int main() {
         opengl::VAO::bind(*leftTriangleVAO);
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
-        glUniform4f(solidColorShaderColorUniformLocation, 1.0f - color, color, 1.0f, 1.0f);
+        opengl::ShaderProgram::use(*vertexColorShaderProgram);
+
         opengl::VAO::bind(*rightTriangleVAO);
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
