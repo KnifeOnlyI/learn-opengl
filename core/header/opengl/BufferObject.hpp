@@ -4,11 +4,11 @@
 #include "glad/glad.h"
 
 namespace opengl {
-class VBO final : public OpenGLResource {
+class BufferObject final : public OpenGLResource {
 public:
-    explicit VBO(GLuint target = GL_ARRAY_BUFFER);
+    explicit BufferObject(GLuint target);
 
-    ~VBO() override;
+    ~BufferObject() override;
 
     [[nodiscard]] unsigned getHandle() const override;
 
@@ -17,7 +17,7 @@ public:
     void sendData(const void *data, GLsizeiptr size, GLenum usage) const;
 
 private:
-    GLuint _target {GL_ARRAY_BUFFER};
+    GLuint _target;
     unsigned int _handle {};
 };
 }
