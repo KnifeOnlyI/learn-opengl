@@ -7,13 +7,12 @@
 #include <glad/glad.h>
 
 #include "io/File.hpp"
-#include "opengl/Shader.hpp"
-#include "opengl/ShaderProgram.hpp"
 
 #include <unistd.h>
 
 #include "opengl/VAO.hpp"
 #include "opengl/BufferObject.hpp"
+#include "opengl/ShaderProgram.hpp"
 
 void handleWindowEvent(const SDL_Event &event, SDL_Window *window, int &windowWidth, int &windowHeight) {
     if (event.window.event == SDL_WINDOWEVENT_RESIZED) {
@@ -46,38 +45,6 @@ void handleKeyboardKeydownEvent(const SDL_Event &event, bool &quit) {
             break;
         default: break;
     }
-}
-
-std::unique_ptr<opengl::ShaderProgram> getSolidColorShaderProgram() {
-    const auto vertexShader = std::make_unique<opengl::Shader>(
-        std::make_unique<io::File>("resources/shaders/solid-color/solid-color.vert")->getContent(),
-        GL_VERTEX_SHADER
-    );
-
-    const auto fragmentShader = std::make_unique<opengl::Shader>(
-        std::make_unique<io::File>("resources/shaders/solid-color/solid-color.frag")->getContent(),
-        GL_FRAGMENT_SHADER
-    );
-
-    std::vector shaders {vertexShader.get(), fragmentShader.get()};
-
-    return std::make_unique<opengl::ShaderProgram>(shaders);
-}
-
-std::unique_ptr<opengl::ShaderProgram> getVertexColorShaderProgram() {
-    const auto vertexShader = std::make_unique<opengl::Shader>(
-        std::make_unique<io::File>("resources/shaders/vertex-color/vertex-color.vert")->getContent(),
-        GL_VERTEX_SHADER
-    );
-
-    const auto fragmentShader = std::make_unique<opengl::Shader>(
-        std::make_unique<io::File>("resources/shaders/vertex-color/vertex-color.frag")->getContent(),
-        GL_FRAGMENT_SHADER
-    );
-
-    std::vector shaders {vertexShader.get(), fragmentShader.get()};
-
-    return std::make_unique<opengl::ShaderProgram>(shaders);
 }
 
 int main() {
@@ -120,8 +87,14 @@ int main() {
     bool quit = false;
     SDL_Event event;
 
-    const auto solidColorShaderProgram = getSolidColorShaderProgram();
-    const auto vertexColorShaderProgram = getVertexColorShaderProgram();
+    const auto solidColorShaderProgram = std::make_unique<opengl::ShaderProgram>(
+        std::make_unique<io::File>("resources/shaders/solid-color/solid-color.vert")->getContent(),
+        std::make_unique<io::File>("resources/shaders/solid-color/solid-color.frag")->getContent()
+    );
+    const auto vertexColorShaderProgram = std::make_unique<opengl::ShaderProgram>(
+        std::make_unique<io::File>("resources/shaders/vertex-color/vertex-color.vert")->getContent(),
+        std::make_unique<io::File>("resources/shaders/vertex-color/vertex-color.frag")->getContent()
+    );
 
     const GLint solidColorShaderPositionAttribLocation = solidColorShaderProgram->getAttributeLocation("position");
     const GLint solidColorShaderColorUniformLocation = solidColorShaderProgram->getUniformLocation("color");
@@ -147,8 +120,7 @@ int main() {
     const auto rightTriangleVAO = std::make_unique<opengl::VAO>();
     const auto rightTriangleVBO = std::make_unique<opengl::BufferObject>(GL_ARRAY_BUFFER);
 
-    opengl::VAO::bind(*leftTriangleVAO);
-
+    leftTriangleVAO->use();
     leftTriangleVBO->sendData(leftTriangleVertices.data(), leftTriangleVertices.size() * sizeof(float), GL_STATIC_DRAW);
 
     glVertexAttribPointer(
@@ -161,8 +133,7 @@ int main() {
     );
     glEnableVertexAttribArray(solidColorShaderPositionAttribLocation);
 
-    opengl::VAO::bind(*rightTriangleVAO);
-
+    rightTriangleVAO->use();
     rightTriangleVBO->sendData(rightTriangleVertices.data(), rightTriangleVertices.size() * sizeof(float), GL_STATIC_DRAW);
 
     glVertexAttribPointer(
@@ -185,9 +156,6 @@ int main() {
     );
     glEnableVertexAttribArray(vertexColorShaderColorAttribLocation);
 
-    std::cout << "vertexColorShaderPositionAttribLocation: " << vertexColorShaderPositionAttribLocation << std::endl;
-    std::cout << "vertexColorShaderColorAttribLocation: " << vertexColorShaderColorAttribLocation << std::endl;
-
     float color = 1.0f;
 
     while (!quit) {
@@ -209,15 +177,15 @@ int main() {
         glViewport(0.0f, 0.0f, windowWidth, windowHeight);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        opengl::ShaderProgram::use(*solidColorShaderProgram);
-
+        solidColorShaderProgram->use();
         glUniform4f(solidColorShaderColorUniformLocation, color, 1.0f, 1.0f - color, 1.0f);
-        opengl::VAO::bind(*leftTriangleVAO);
+
+        leftTriangleVAO->use();
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
-        opengl::ShaderProgram::use(*vertexColorShaderProgram);
+        vertexColorShaderProgram->use();
 
-        opengl::VAO::bind(*rightTriangleVAO);
+        rightTriangleVAO->use();
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
         SDL_GL_SwapWindow(window);

@@ -11,7 +11,7 @@ BufferObject::~BufferObject() {
     glDeleteBuffers(1, &_handle);
 }
 
-unsigned BufferObject::getHandle() const {
+GLuint BufferObject::getHandle() const {
     return _handle;
 }
 

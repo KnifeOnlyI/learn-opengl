@@ -3,10 +3,6 @@
 #include "glad/glad.h"
 
 namespace opengl {
-void VAO::bind(const VAO &vao) {
-    glBindVertexArray(vao.getHandle());
-}
-
 VAO::VAO() {
     glGenVertexArrays(1, &_handle);
 }
@@ -15,7 +11,11 @@ VAO::~VAO() {
     glDeleteVertexArrays(1, &_handle);
 }
 
-unsigned VAO::getHandle() const {
+GLuint VAO::getHandle() const {
     return _handle;
+}
+
+void VAO::use() const {
+    glBindVertexArray(_handle);
 }
 }

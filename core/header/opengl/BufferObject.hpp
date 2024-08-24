@@ -1,5 +1,5 @@
-#ifndef VBO_HPP
-#define VBO_HPP
+#ifndef BUFFEROBJECT_HPP
+#define BUFFEROBJECT_HPP
 #include "OpenGLResource.hpp"
 #include "glad/glad.h"
 
@@ -10,7 +10,7 @@ public:
 
     ~BufferObject() override;
 
-    [[nodiscard]] unsigned getHandle() const override;
+    [[nodiscard]] GLuint getHandle() const override;
 
     void sendData(const void *data, GLsizeiptr size, GLenum usage) const;
 
@@ -18,8 +18,8 @@ private:
     void bind() const;
 
     GLuint _target;
-    unsigned int _handle {};
+    GLuint _handle {};
 };
 }
 
-#endif //VBO_HPP
+#endif //BUFFEROBJECT_HPP

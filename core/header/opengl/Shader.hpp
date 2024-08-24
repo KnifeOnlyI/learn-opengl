@@ -3,19 +3,18 @@
 #include <string>
 
 #include "OpenGLResource.hpp"
-#include "glad/glad.h"
 
 namespace opengl {
 class Shader final : public OpenGLResource {
 public:
-    Shader(const std::string &source, GLenum type);
+    Shader(GLuint shaderProgram, GLenum type, const std::string &source);
 
     ~Shader() override;
 
-    [[nodiscard]] unsigned getHandle() const override;
+    [[nodiscard]] GLuint getHandle() const override;
 
 private:
-    unsigned int _handle;
+    GLuint _handle {};
 };
 }
 

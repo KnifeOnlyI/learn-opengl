@@ -1,24 +1,46 @@
-#include <iostream>
-
 #include "opengl/Shader.hpp"
 
-namespace opengl {
-Shader::Shader(const std::string &source, const GLenum type): _handle {glCreateShader(type)} {
-    const char *shaderSourceCode = source.c_str();
+#include <iostream>
+#include <ostream>
 
-    glShaderSource(_handle, 1, &shaderSourceCode, nullptr);
+namespace opengl {
+Shader::Shader(const GLuint shaderProgram, const GLenum type, const std::string &source): _handle {glCreateShader(type)} {
+    const char *cSource = source.c_str();
+
+    glShaderSource(_handle, 1, &cSource, nullptr);
     glCompileShader(_handle);
 
-    int success;
+    GLint shaderCompiled;
 
-    glGetShaderiv(_handle, GL_COMPILE_STATUS, &success);
+    glGetShaderiv(_handle, GL_COMPILE_STATUS, &shaderCompiled);
 
-    if (!success) {
+    if (!shaderCompiled) {
+        glDeleteShader(_handle);
+
         std::string info(512, '\0');
 
         glGetShaderInfoLog(_handle, 512, nullptr, info.data());
 
-        std::cerr << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << info << std::endl;
+        std::cerr << "ERROR::SHADER::" << type << "::COMPILATION_FAILED\n" << info << std::endl;
+
+        throw std::runtime_error("Shader compilation failed");
+    }
+
+    GLint shaderAttached;
+
+    glAttachShader(shaderProgram, _handle);
+    glGetProgramiv(shaderProgram, GL_ATTACHED_SHADERS, &shaderAttached);
+
+    if (!shaderAttached) {
+        glDeleteShader(_handle);
+
+        std::string info(512, '\0');
+
+        glGetShaderInfoLog(_handle, 512, nullptr, info.data());
+
+        std::cerr << "ERROR::SHADER::VERTEX::ATTACH_TO_PROGRAM_FAILED: " << info << std::endl;
+
+        throw std::runtime_error("Shader attach failed");
     }
 }
 
@@ -26,7 +48,7 @@ Shader::~Shader() {
     glDeleteShader(_handle);
 }
 
-unsigned Shader::getHandle() const {
+GLuint Shader::getHandle() const {
     return _handle;
 }
 }

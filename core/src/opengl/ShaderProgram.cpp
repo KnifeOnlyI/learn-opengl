@@ -1,44 +1,29 @@
-#include <iostream>
-
 #include "opengl/ShaderProgram.hpp"
 
+#include <iostream>
+#include <memory>
+
 #include "glad/glad.h"
+#include "opengl/Shader.hpp"
 
 namespace opengl {
-void ShaderProgram::use(const ShaderProgram &shaderProgram) {
-    glUseProgram(shaderProgram.getHandle());
-}
+ShaderProgram::ShaderProgram(const std::string &vertexShaderSource, const std::string &fragmentShaderSource) : _handle {glCreateProgram()} {
+    const auto vertexShader = std::make_unique<Shader>(_handle, GL_VERTEX_SHADER, vertexShaderSource);
+    const auto fragmentShader = std::make_unique<Shader>(_handle, GL_FRAGMENT_SHADER, fragmentShaderSource);
 
-ShaderProgram::ShaderProgram(const std::vector<Shader *> &shaders): _handle {glCreateProgram()} {
-    int success;
-
-    if (!_handle) {
-        std::cerr << "ERROR::SHADER::PROGRAM::CREATION_FAILED: " << glGetError() << std::endl;
-    }
-
-    // For each shaders in the vector, attach it to the program
-    for (const auto &shader: shaders) {
-        glAttachShader(_handle, shader->getHandle());
-        glGetProgramiv(_handle, GL_ATTACHED_SHADERS, &success);
-
-        if (!success) {
-            std::string info(512, '\0');
-
-            glGetShaderInfoLog(_handle, 512, nullptr, info.data());
-
-            std::cerr << "ERROR::SHADER::PROGRAM::ATTACH_FAILED: " << info << std::endl;
-        }
-    }
+    GLint programLinked;
 
     glLinkProgram(_handle);
-    glGetProgramiv(_handle, GL_LINK_STATUS, &success);
+    glGetProgramiv(_handle, GL_LINK_STATUS, &programLinked);
 
-    if (!success) {
+    if (!programLinked) {
         std::string info(512, '\0');
 
         glGetProgramInfoLog(_handle, 512, nullptr, info.data());
 
-        std::cerr << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << info << std::endl;
+        std::cerr << "ERROR::SHADER::PROGRAM::LINKING_FAILED: " << info << std::endl;
+
+        throw std::runtime_error("Shader program linking failed");
     }
 }
 
@@ -46,8 +31,14 @@ ShaderProgram::~ShaderProgram() {
     glDeleteProgram(_handle);
 }
 
-unsigned ShaderProgram::getHandle() const {
+GLuint ShaderProgram::getHandle() const {
     return _handle;
+}
+
+ShaderProgram &ShaderProgram::use() {
+    glUseProgram(_handle);
+
+    return *this;
 }
 
 GLint ShaderProgram::getAttributeLocation(const std::string &name) const {
@@ -56,5 +47,11 @@ GLint ShaderProgram::getAttributeLocation(const std::string &name) const {
 
 GLint ShaderProgram::getUniformLocation(const std::string &name) const {
     return glGetUniformLocation(_handle, name.c_str());
+}
+
+ShaderProgram &ShaderProgram::setUniform4f(const std::string &name, const float v0, const float v1, const float v2, const float v3) {
+    glUniform4f(getUniformLocation(name), v0, v1, v2, v3);
+
+    return *this;
 }
 }

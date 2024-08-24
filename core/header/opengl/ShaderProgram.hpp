@@ -1,29 +1,30 @@
-#ifndef SHADERPROGRAM_HPP
-#define SHADERPROGRAM_HPP
-#include <vector>
+#ifndef SHADER_PROGRAM_HPP
+#define SHADER_PROGRAM_HPP
+#include <string>
 
 #include "OpenGLResource.hpp"
-#include "Shader.hpp"
+#include "glad/glad.h"
 
 namespace opengl {
 class ShaderProgram final : public OpenGLResource {
 public:
-
-    static void use(const ShaderProgram &shaderProgram);
-
-    explicit ShaderProgram(const std::vector<Shader *> &shaders);
+    ShaderProgram(const std::string &vertexShaderSource, const std::string &fragmentShaderSource);
 
     ~ShaderProgram() override;
 
-    [[nodiscard]] unsigned getHandle() const override;
+    [[nodiscard]] GLuint getHandle() const override;
 
     GLint getAttributeLocation(const std::string &name) const;
 
     GLint getUniformLocation(const std::string &name) const;
 
+    ShaderProgram &use();
+
+    ShaderProgram &setUniform4f(const std::string &name, float v0, float v1, float v2, float v3);
+
 private:
-    unsigned int _handle;
+    GLuint _handle {};
 };
 }
 
-#endif //SHADERPROGRAM_HPP
+#endif //SHADER_PROGRAM_HPP
