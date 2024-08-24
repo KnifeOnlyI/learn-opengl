@@ -104,32 +104,37 @@ int main() {
     bool quit = false;
     SDL_Event event;
 
-    constexpr std::array vertices = {
-        -0.5f, 0.25f, 0.0f, // triangle left : top
-        -0.75f, -0.25f, 0.0f, // triangle left : bottom left
-        -0.25f, -0.25f, 0.0f, // triangle left : bottom right
-        0.25f, 0.25f, 0.0f, // triangle right : top left
-        0.75f, 0.25f, 0.0f, // triangle right : top right
-        0.5f, -0.25f, 0.0f // triangle right : bottom
-    };
-    constexpr std::array<unsigned int, 6> verticesIndex = {
-        0, 1, 2, // first triangle vertices index (top right, bottom right, top left)
-        3, 4, 5 // second triangle vertices index (bottom right, bottom left, top left)
+    constexpr std::array leftTriangleVertices = {
+        -0.5f, 0.25f, 0.0f, // top
+        -0.75f, -0.25f, 0.0f, // bottom left
+        -0.25f, -0.25f, 0.0f // bottom right
     };
 
-    const auto vao = std::make_unique<opengl::VAO>();
-    const auto vbo = std::make_unique<opengl::BufferObject>(GL_ARRAY_BUFFER);
-    const auto ebo = std::make_unique<opengl::BufferObject>(GL_ELEMENT_ARRAY_BUFFER);
+    constexpr std::array rightTriangleVertices = {
+        0.25f, 0.25f, 0.0f, // top left
+        0.75f, 0.25f, 0.0f, // top right
+        0.5f, -0.25f, 0.0f // bottom
+    };
 
-    opengl::VAO::bind(*vao);
+    const auto leftTriangleVAO = std::make_unique<opengl::VAO>();
+    const auto leftTriangleVBO = std::make_unique<opengl::BufferObject>(GL_ARRAY_BUFFER);
 
-    vbo->use();
-    vbo->sendData(vertices.data(), vertices.size() * sizeof(float), GL_STATIC_DRAW);
+    const auto rightTriangleVAO = std::make_unique<opengl::VAO>();
+    const auto rightTriangleVBO = std::make_unique<opengl::BufferObject>(GL_ARRAY_BUFFER);
+
+    opengl::VAO::bind(*leftTriangleVAO);
+
+    leftTriangleVBO->use();
+    leftTriangleVBO->sendData(leftTriangleVertices.data(), leftTriangleVertices.size() * sizeof(float), GL_STATIC_DRAW);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
     glEnableVertexAttribArray(0);
 
-    ebo->use();
-    ebo->sendData(verticesIndex.data(), verticesIndex.size() * sizeof(int), GL_STATIC_DRAW);
+    opengl::VAO::bind(*rightTriangleVAO);
+
+    rightTriangleVBO->use();
+    rightTriangleVBO->sendData(rightTriangleVertices.data(), rightTriangleVertices.size() * sizeof(float), GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glEnableVertexAttribArray(0);
 
     const auto solidColorShaderProgram = getSolidColorShaderProgram();
 
@@ -152,10 +157,13 @@ int main() {
         glViewport(0.0f, 0.0f, windowWidth, windowHeight);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        opengl::VAO::bind(*vao);
         opengl::ShaderProgram::use(*solidColorShaderProgram);
 
-        glDrawArrays(GL_TRIANGLES, 0, 6);
+        opengl::VAO::bind(*leftTriangleVAO);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+
+        opengl::VAO::bind(*rightTriangleVAO);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
 
         SDL_GL_SwapWindow(window);
     }
