@@ -13,54 +13,18 @@
 #include "opengl/BufferObject.hpp"
 #include "opengl/ShaderProgram.hpp"
 #include "opengl/Texture.hpp"
-#include "sdl/Image.hpp"
+#include "stb/Image.hpp"
 
-void handleWindowEvent(const SDL_Event& event, SDL_Window* window,
-                       int& windowWidth, int& windowHeight)
-{
-    if (event.window.event == SDL_WINDOWEVENT_RESIZED)
-    {
-        std::cout << "Window resized to " << event.window.data1 << "x" << event.
-                                                                          window.data2 << std::endl;
-        SDL_GetWindowSize(window, &windowWidth, &windowHeight);
-    }
-}
-
-void handleKeyboardKeydownEvent(const SDL_Event& event, bool& quit)
-{
-    switch (event.key.keysym.sym)
-    {
-    case SDLK_ESCAPE:
-        quit = true;
-        break;
-    case SDLK_a:
-        glClearColor(0.0f, 0.0f, 0.0f, 0.f);
-        break;
-    case SDLK_SPACE:
-        int polygonMode;
-        glGetIntegerv(GL_POLYGON_MODE, &polygonMode);
-        glPolygonMode(
-            GL_FRONT_AND_BACK, polygonMode == GL_FILL ? GL_LINE : GL_FILL);
-        break;
-    case SDLK_r:
-        glClearColor(1.0f, 0.0f, 0.0f, 0.f);
-        break;
-    case SDLK_g:
-        glClearColor(0.0f, 1.0f, 0.0f, 0.f);
-        break;
-    case SDLK_b:
-        glClearColor(0.0f, 0.0f, 1.0f, 0.f);
-        break;
-    default: break;
-    }
-}
+void handleWindowEvent(const SDL_Event& event, SDL_Window* window, int& windowWidth, int& windowHeight);
+void handleKeyboardKeydownEvent(const SDL_Event& event, bool& quit);
 
 int main()
 {
     SDL_Init(SDL_INIT_VIDEO);
+    stb::Image::flipVerticallyOnLoad(true);
 
-    int windowWidth = 800;
-    int windowHeight = 600;
+    int windowWidth = 512;
+    int windowHeight = 512;
 
     SDL_Window* window = SDL_CreateWindow(
         "OpenGL",
@@ -112,10 +76,10 @@ int main()
     // @formatter:off
     constexpr std::array vertices = {
         // positions       // colors         // texture coords
-        0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,          // top right
-        0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,          // bottom right
-       -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,          // bottom left
-       -0.5f,  0.5f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f           // top left
+        1.0f,  1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,          // top right
+        1.0f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,          // bottom right
+       -1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,          // bottom left
+       -1.0f,  1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f           // top left
     };
     // @formatter:on
     constexpr std::array<unsigned int, 6> verticesIndex = {
@@ -125,8 +89,8 @@ int main()
 
     // Generate OpenGL Texture
 
-    const auto texture1 = std::make_unique<opengl::Texture>(GL_TEXTURE_2D, "resources/textures/wooden_container.jpg");
-    const auto texture2 = std::make_unique<opengl::Texture>(GL_TEXTURE_2D, "resources/textures/wall.jpg");
+    const auto texture1 = std::make_unique<opengl::Texture>(GL_TEXTURE_2D, "resources/textures/awesomeface.png", GL_RGBA);
+    const auto texture2 = std::make_unique<opengl::Texture>(GL_TEXTURE_2D, "resources/textures/wall.jpg", GL_RGB);
 
     // ...
 
@@ -196,4 +160,44 @@ int main()
     SDL_Quit();
 
     return 0;
+}
+
+void handleWindowEvent(const SDL_Event& event, SDL_Window* window,
+                       int& windowWidth, int& windowHeight)
+{
+    if (event.window.event == SDL_WINDOWEVENT_RESIZED)
+    {
+        std::cout << "Window resized to " << event.window.data1 << "x" << event.
+                                                                          window.data2 << std::endl;
+        SDL_GetWindowSize(window, &windowWidth, &windowHeight);
+    }
+}
+
+void handleKeyboardKeydownEvent(const SDL_Event& event, bool& quit)
+{
+    switch (event.key.keysym.sym)
+    {
+    case SDLK_ESCAPE:
+        quit = true;
+        break;
+    case SDLK_a:
+        glClearColor(0.0f, 0.0f, 0.0f, 0.f);
+        break;
+    case SDLK_SPACE:
+        int polygonMode;
+        glGetIntegerv(GL_POLYGON_MODE, &polygonMode);
+        glPolygonMode(
+            GL_FRONT_AND_BACK, polygonMode == GL_FILL ? GL_LINE : GL_FILL);
+        break;
+    case SDLK_r:
+        glClearColor(1.0f, 0.0f, 0.0f, 0.f);
+        break;
+    case SDLK_g:
+        glClearColor(0.0f, 1.0f, 0.0f, 0.f);
+        break;
+    case SDLK_b:
+        glClearColor(0.0f, 0.0f, 1.0f, 0.f);
+        break;
+    default: break;
+    }
 }

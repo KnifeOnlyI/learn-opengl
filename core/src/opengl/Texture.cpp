@@ -2,11 +2,11 @@
 
 #include <memory>
 
-#include "sdl/Image.hpp"
+#include "stb/Image.hpp"
 
 namespace opengl
 {
-Texture::Texture(const GLuint target, const std::string& filepath): _target {target}
+Texture::Texture(const GLuint target, const std::string& filepath, const GLenum format): _target {target}
 {
     glGenTextures(1, &_handle);
 
@@ -17,18 +17,18 @@ Texture::Texture(const GLuint target, const std::string& filepath): _target {tar
     glTexParameteri(_target, GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(_target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    const auto textureImage = std::make_unique<sdl::Image>(filepath);
+    const auto textureImage = std::make_unique<stb::Image>(filepath);
 
     glTexImage2D(
         GL_TEXTURE_2D,
         0,
-        GL_RGB,
+        static_cast<GLint>(format),
         textureImage->getWidth(),
         textureImage->getHeight(),
         0,
-        GL_RGB,
+        format,
         GL_UNSIGNED_BYTE,
-        textureImage->getPixels()
+        textureImage->getHandle()
     );
 
     glGenerateMipmap(GL_TEXTURE_2D);
