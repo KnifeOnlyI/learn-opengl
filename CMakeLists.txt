@@ -41,7 +41,7 @@ include_directories(${CMAKE_CURRENT_LIST_DIR}/third/glad/include)
 find_package(SDL2 REQUIRED)
 
 add_executable(${PROJECT_NAME} ${SOURCES} ${THIRD_SOURCES} ${HEADERS} ${THIRD_HEADERS})
-target_link_libraries(learnopengl SDL2::SDL2)
+target_link_libraries(learnopengl SDL2::SDL2 SDL2_image)
 # If problems happens...
 # target_link_libraries(learnopengl SDL2::SDL2 GL X11 pthread Xrandr Xi dl)
 
