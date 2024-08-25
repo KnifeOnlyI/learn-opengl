@@ -67,15 +67,23 @@ ShaderProgram& ShaderProgram::setUniform1i(const std::string& name, const GLint 
     return *this;
 }
 
-ShaderProgram& ShaderProgram::setUniform3f(const std::string& name, const float v0, const float v1, const float v2)
+ShaderProgram& ShaderProgram::setUniform1f(const std::string& name, const GLfloat v0)
+{
+    glUniform1f(getUniformLocation(name), v0);
+
+    return *this;
+}
+
+ShaderProgram& ShaderProgram::setUniform3f(const std::string& name, const GLfloat v0, const GLfloat v1,
+                                           const GLfloat v2)
 {
     glUniform3f(getUniformLocation(name), v0, v1, v2);
 
     return *this;
 }
 
-ShaderProgram& ShaderProgram::setUniform4f(const std::string& name, const float v0, const float v1, const float v2,
-                                           const float v3)
+ShaderProgram& ShaderProgram::setUniform4f(const std::string& name, const GLfloat v0, const GLfloat v1,
+                                           const GLfloat v2, const GLfloat v3)
 {
     glUniform4f(getUniformLocation(name), v0, v1, v2, v3);
 

@@ -7,10 +7,11 @@ in vec2 texCoord;
 
 uniform sampler2D texture1;
 uniform sampler2D texture2;
+uniform float mixTexture;
 
 void main()
 {
     vec2 flippedXCoord = vec2(-texCoord.x, texCoord.y);
 
-    fragmentColor = mix(texture(texture1, flippedXCoord), texture(texture2, texCoord), 0.5);
+    fragmentColor = mix(texture(texture1, flippedXCoord), texture(texture2, texCoord), mixTexture);
 }

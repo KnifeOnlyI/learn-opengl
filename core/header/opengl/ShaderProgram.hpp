@@ -24,6 +24,8 @@ public:
 
     ShaderProgram& setUniform1i(const std::string& name, GLint v0);
 
+    ShaderProgram& setUniform1f(const std::string& name, GLfloat v0);
+
     ShaderProgram& setUniform3f(const std::string& name, GLfloat v0, GLfloat v1, GLfloat v2);
 
     ShaderProgram& setUniform4f(const std::string& name, GLfloat v0, GLfloat v1, GLfloat v2, GLfloat v3);

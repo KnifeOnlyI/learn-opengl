@@ -8,6 +8,7 @@
 #include "io/File.hpp"
 
 #include <unistd.h>
+#include <bits/algorithmfwd.h>
 
 #include "opengl/VAO.hpp"
 #include "opengl/BufferObject.hpp"
@@ -16,7 +17,7 @@
 #include "stb/Image.hpp"
 
 void handleWindowEvent(const SDL_Event& event, SDL_Window* window, int& windowWidth, int& windowHeight);
-void handleKeyboardKeydownEvent(const SDL_Event& event, bool& quit);
+void handleKeyboardKeydownEvent(const SDL_Event& event, bool& quit, float& mixTexture);
 
 int main()
 {
@@ -123,6 +124,8 @@ int main()
     glEnableVertexAttribArray(vertexColorAttrib);
     glEnableVertexAttribArray(vertexTexCoordAttrib);
 
+    float mixTexture = 0.5f;
+
     while (!quit)
     {
         while (SDL_PollEvent(&event))
@@ -133,7 +136,7 @@ int main()
                 quit = true;
                 break;
             case SDL_KEYDOWN:
-                handleKeyboardKeydownEvent(event, quit);
+                handleKeyboardKeydownEvent(event, quit, mixTexture);
                 break;
             case SDL_WINDOWEVENT:
                 handleWindowEvent(event, window, windowWidth, windowHeight);
@@ -149,6 +152,7 @@ int main()
 
         shader->setUniform1i("texture1", 0);
         shader->setUniform1i("texture2", 1);
+        shader->setUniform1f("mixTexture", mixTexture);
 
         vao->use();
         texture1->setActive(GL_TEXTURE0);
@@ -171,13 +175,12 @@ void handleWindowEvent(const SDL_Event& event, SDL_Window* window,
 {
     if (event.window.event == SDL_WINDOWEVENT_RESIZED)
     {
-        std::cout << "Window resized to " << event.window.data1 << "x" << event.
-                                                                          window.data2 << std::endl;
+        std::cout << "Window resized to " << event.window.data1 << "x" << event.window.data2 << std::endl;
         SDL_GetWindowSize(window, &windowWidth, &windowHeight);
     }
 }
 
-void handleKeyboardKeydownEvent(const SDL_Event& event, bool& quit)
+void handleKeyboardKeydownEvent(const SDL_Event& event, bool& quit, float& mixTexture)
 {
     switch (event.key.keysym.sym)
     {
@@ -190,8 +193,7 @@ void handleKeyboardKeydownEvent(const SDL_Event& event, bool& quit)
     case SDLK_SPACE:
         int polygonMode;
         glGetIntegerv(GL_POLYGON_MODE, &polygonMode);
-        glPolygonMode(
-            GL_FRONT_AND_BACK, polygonMode == GL_FILL ? GL_LINE : GL_FILL);
+        glPolygonMode(GL_FRONT_AND_BACK, polygonMode == GL_FILL ? GL_LINE : GL_FILL);
         break;
     case SDLK_r:
         glClearColor(1.0f, 0.0f, 0.0f, 0.f);
@@ -201,6 +203,24 @@ void handleKeyboardKeydownEvent(const SDL_Event& event, bool& quit)
         break;
     case SDLK_b:
         glClearColor(0.0f, 0.0f, 1.0f, 0.f);
+        break;
+    case SDLK_UP:
+        mixTexture += 0.1f;
+
+        if (mixTexture > 1.0f)
+        {
+            mixTexture = 1.0f;
+        }
+
+        break;
+    case SDLK_DOWN:
+        mixTexture -= 0.1f;
+
+        if (mixTexture < 0.0f)
+        {
+            mixTexture = 0.0f;
+        }
+
         break;
     default: break;
     }
