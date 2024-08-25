@@ -5,24 +5,28 @@
 #include "OpenGLResource.hpp"
 #include "glad/glad.h"
 
-namespace opengl {
-class ShaderProgram final : public OpenGLResource {
+namespace opengl
+{
+class ShaderProgram final : public OpenGLResource
+{
 public:
-    ShaderProgram(const std::string &vertexShaderSource, const std::string &fragmentShaderSource);
+    ShaderProgram(const std::string& vertexShaderSource, const std::string& fragmentShaderSource);
 
     ~ShaderProgram() override;
 
     [[nodiscard]] GLuint getHandle() const override;
 
-    GLint getAttributeLocation(const std::string &name) const;
+    [[nodiscard]] GLint getAttributeLocation(const std::string& name) const;
 
-    GLint getUniformLocation(const std::string &name) const;
+    [[nodiscard]] GLint getUniformLocation(const std::string& name) const;
 
-    ShaderProgram &use();
+    ShaderProgram& use();
 
-    ShaderProgram &setUniform3f(const std::string &name, float v0, float v1, float v2);
+    ShaderProgram& setUniform1i(const std::string& name, GLint v0);
 
-    ShaderProgram &setUniform4f(const std::string &name, float v0, float v1, float v2, float v3);
+    ShaderProgram& setUniform3f(const std::string& name, GLfloat v0, GLfloat v1, GLfloat v2);
+
+    ShaderProgram& setUniform4f(const std::string& name, GLfloat v0, GLfloat v1, GLfloat v2, GLfloat v3);
 
 private:
     GLuint _handle {};

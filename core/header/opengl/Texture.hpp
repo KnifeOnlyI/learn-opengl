@@ -17,6 +17,8 @@ public:
 
     void bind() const;
 
+    void setActive(GLenum textureUnit) const;
+
 private:
     GLuint _target {};
     GLuint _handle {};

@@ -125,7 +125,8 @@ int main()
 
     // Generate OpenGL Texture
 
-    const auto texture = std::make_unique<opengl::Texture>(GL_TEXTURE_2D, "resources/textures/wooden_container.jpg");
+    const auto texture1 = std::make_unique<opengl::Texture>(GL_TEXTURE_2D, "resources/textures/wooden_container.jpg");
+    const auto texture2 = std::make_unique<opengl::Texture>(GL_TEXTURE_2D, "resources/textures/wall.jpg");
 
     // ...
 
@@ -177,8 +178,13 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT);
 
         shader->use();
+
+        shader->setUniform1i("texture1", 0);
+        shader->setUniform1i("texture2", 1);
+
         vao->use();
-        texture->bind();
+        texture1->setActive(GL_TEXTURE0);
+        texture2->setActive(GL_TEXTURE1);
 
         glDrawElements(GL_TRIANGLES, verticesIndex.size(), GL_UNSIGNED_INT, nullptr);
 

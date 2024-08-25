@@ -48,4 +48,10 @@ void Texture::bind() const
 {
     glBindTexture(_target, _handle);
 }
+
+void Texture::setActive(const GLenum textureUnit) const
+{
+    glActiveTexture(textureUnit);
+    bind();
+}
 }
