@@ -6,17 +6,18 @@
 
 namespace opengl
 {
-Texture::Texture(const GLuint target, const std::string& filepath, const GLenum format, const GLint wrap)
+Texture::Texture(const GLuint target, const std::string& filepath, const GLenum format, const GLint wrapping,
+                 const GLint filtering)
     : _target {target}
 {
     glGenTextures(1, &_handle);
 
     glBindTexture(_target, _handle);
 
-    glTexParameteri(_target, GL_TEXTURE_WRAP_S, wrap);
-    glTexParameteri(_target, GL_TEXTURE_WRAP_T, wrap);
-    glTexParameteri(_target, GL_TEXTURE_MIN_FILTER,GL_LINEAR);
-    glTexParameteri(_target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(_target, GL_TEXTURE_WRAP_S, wrapping);
+    glTexParameteri(_target, GL_TEXTURE_WRAP_T, wrapping);
+    glTexParameteri(_target, GL_TEXTURE_MIN_FILTER, filtering);
+    glTexParameteri(_target, GL_TEXTURE_MAG_FILTER, filtering);
 
     const auto textureImage = std::make_unique<stb::Image>(filepath);
 

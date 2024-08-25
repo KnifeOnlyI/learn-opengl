@@ -9,7 +9,7 @@ namespace opengl
 class Texture final : public OpenGLResource
 {
 public:
-    explicit Texture(GLuint target, const std::string& filepath, GLenum format, GLint wrap);
+    explicit Texture(GLuint target, const std::string& filepath, GLenum format, GLint wrapping, GLint filtering);
 
     ~Texture() override;
 
