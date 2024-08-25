@@ -76,10 +76,10 @@ int main()
     // @formatter:off
     constexpr std::array vertices = {
         // positions       // colors         // texture coords
-        0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,          // top right
-        0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,          // bottom right
+        0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 2.0f, 2.0f,          // top right
+        0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 2.0f, 0.0f,          // bottom right
        -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,          // bottom left
-       -0.5f,  0.5f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f           // top left
+       -0.5f,  0.5f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 2.0f           // top left
     };
     // @formatter:on
     constexpr std::array<unsigned int, 6> verticesIndex = {
@@ -89,8 +89,12 @@ int main()
 
     // Generate OpenGL Texture
 
-    const auto texture1 = std::make_unique<opengl::Texture>(GL_TEXTURE_2D, "resources/textures/awesomeface.png", GL_RGBA);
-    const auto texture2 = std::make_unique<opengl::Texture>(GL_TEXTURE_2D, "resources/textures/wall.jpg", GL_RGB);
+    const auto texture1 = std::make_unique<opengl::Texture>(
+        GL_TEXTURE_2D, "resources/textures/awesomeface.png",GL_RGBA, GL_REPEAT
+    );
+    const auto texture2 = std::make_unique<opengl::Texture>(
+        GL_TEXTURE_2D, "resources/textures/wooden_container.jpg", GL_RGB, GL_CLAMP_TO_EDGE
+    );
 
     // ...
 
