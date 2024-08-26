@@ -4,6 +4,7 @@
 
 #include "OpenGLResource.hpp"
 #include "glad/glad.h"
+#include "glm/fwd.hpp"
 
 namespace opengl
 {
@@ -29,6 +30,8 @@ public:
     ShaderProgram& setUniform3f(const std::string& name, GLfloat v0, GLfloat v1, GLfloat v2);
 
     ShaderProgram& setUniform4f(const std::string& name, GLfloat v0, GLfloat v1, GLfloat v2, GLfloat v3);
+
+    ShaderProgram &setUniformMatrix4fv(const std::string &name, const glm::mat4 &matrix);
 
 private:
     GLuint _handle {};

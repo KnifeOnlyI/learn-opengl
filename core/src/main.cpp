@@ -8,7 +8,8 @@
 #include "io/File.hpp"
 
 #include <unistd.h>
-#include <bits/algorithmfwd.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include "opengl/VAO.hpp"
 #include "opengl/BufferObject.hpp"
@@ -77,10 +78,10 @@ int main()
     // @formatter:off
     constexpr std::array vertices = {
         // positions       // colors         // texture coords
-        0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.55f, 0.55f,          // top right
-        0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.55f, 0.45f,          // bottom right
-       -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.45f, 0.45f,          // bottom left
-       -0.5f,  0.5f, 0.0f, 1.0f, 1.0f, 0.0f, 0.45f, 0.55f           // top left
+        0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,          // top right
+        0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,          // bottom right
+       -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,          // bottom left
+       -0.5f,  0.5f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f           // top left
     };
     // @formatter:on
     constexpr std::array<unsigned int, 6> verticesIndex = {
@@ -126,6 +127,10 @@ int main()
 
     float mixTexture = 0.5f;
 
+    float angle = 0.0f;
+    float translateValue = 0.0f;
+    bool up = true;
+
     while (!quit)
     {
         while (SDL_PollEvent(&event))
@@ -148,15 +153,41 @@ int main()
         glViewport(0.0f, 0.0f, windowWidth, windowHeight);
         glClear(GL_COLOR_BUFFER_BIT);
 
+        auto transform = glm::mat4(1.0f);
+
+        transform = translate(transform, glm::vec3(0.0, translateValue, 0.0));
+        transform = rotate(transform, glm::radians(angle), glm::vec3(0.0, 1.0, 0.0));
+        transform = scale(transform, glm::vec3(0.5, 0.5, 0.5));
+
         shader->use();
 
         shader->setUniform1i("texture1", 0);
         shader->setUniform1i("texture2", 1);
         shader->setUniform1f("mixTexture", mixTexture);
+        shader->setUniformMatrix4fv("transform", transform);
 
         vao->use();
         texture1->setActive(GL_TEXTURE0);
         texture2->setActive(GL_TEXTURE1);
+
+        angle += 1.0f;
+
+        if (angle > 360.0f)
+        {
+            angle = 0.0f;
+        }
+
+        translateValue = up ? translateValue + 0.01f : translateValue - 0.01f;
+
+        if (translateValue > 0.75f)
+        {
+            translateValue = 0.75f;
+            up = false;
+        } else if (translateValue < 0.0f)
+        {
+            translateValue = 0.0f;
+            up = true;
+        }
 
         glDrawElements(GL_TRIANGLES, verticesIndex.size(), GL_UNSIGNED_INT, nullptr);
 

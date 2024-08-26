@@ -4,6 +4,7 @@
 #include <memory>
 
 #include "glad/glad.h"
+#include "glm/gtc/type_ptr.hpp"
 #include "opengl/Shader.hpp"
 
 namespace opengl
@@ -86,6 +87,13 @@ ShaderProgram& ShaderProgram::setUniform4f(const std::string& name, const GLfloa
                                            const GLfloat v2, const GLfloat v3)
 {
     glUniform4f(getUniformLocation(name), v0, v1, v2, v3);
+
+    return *this;
+}
+
+ShaderProgram& ShaderProgram::setUniformMatrix4fv(const std::string& name, const glm::mat4& matrix)
+{
+    glUniformMatrix4fv(getUniformLocation(name), 1, GL_FALSE, value_ptr(matrix));
 
     return *this;
 }

@@ -38,6 +38,7 @@ file(
 include_directories(${CMAKE_CURRENT_LIST_DIR}/core/header)
 include_directories(${CMAKE_CURRENT_LIST_DIR}/third/glad/header)
 include_directories(${CMAKE_CURRENT_LIST_DIR}/third/stb/header)
+include_directories(${CMAKE_CURRENT_LIST_DIR}/third/glm/header)
 
 find_package(SDL2 REQUIRED)
 

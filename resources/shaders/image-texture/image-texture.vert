@@ -7,9 +7,11 @@ in vec2 vertexTexCoord;
 out vec3 color;
 out vec2 texCoord;
 
+uniform mat4 transform;
+
 void main()
 {
-    gl_Position = vec4(vertexPosition, 1.0);
+    gl_Position = transform * vec4(vertexPosition, 1.0);
     color = vertexColor;
     texCoord = vertexTexCoord;
 }
